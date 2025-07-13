@@ -114,6 +114,31 @@ app.delete('/api/product/:id', async (req,res) =>{
 
 app.get('/api/product', async (req, res) => {
     try {
+        const product = await Product.findOne({name:req.query.name});
+
+        if (!product) {
+            res.status(404).json({message:"Product not found"});
+        }
+
+        res.status(200).json(product);
+        
+    } catch (error) {
+        res.status(500).json({message:error.message});
+    }
+});
+
+//find one and update
+app.put('/api/product', async (req, res) => {
+    try {
+        const product = await Product.findOneAndUpdate({name:req.query.name}, req.body);
+
+        if (!product) {
+            res.status(404).json({message:"Product not found"});
+        }
+
+        const updatedProduct = await Product.findOne({name:req.query.name});
+
+        res.status(200).json(updatedProduct);
         
     } catch (error) {
         res.status(500).json({message:error.message});
@@ -122,17 +147,7 @@ app.get('/api/product', async (req, res) => {
 
 
 
-mongoose.connect('mongodb+srv://edikemadasa:RVhkC9EcaV5mo6Qe@backenddb.7r8ykkt.mongodb.net/Node-API?retryWrites=true&w=majority&appName=BAckendDB').then(() => {
-    console.log("Database Connected!");
-    app.listen(3000, () => {
-        console.log("App is running on server - http://localhost:3000");
 
-    });
-
-}).catch((err) => {
-    console.error("Database not connected, Error - ", err);
-
-});
 
 
 
