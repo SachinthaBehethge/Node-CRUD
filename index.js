@@ -9,14 +9,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const Product = require('./models/product_model');
+require('dotenv').config();
 const app = express();
 
 app.use(express.json());
 
-
+const mongoUrl = process.env.MONGO_DB_URL; 
 
 app.get('/', (req, res) => {
-    res.send("Product app");
+    res.send("product-app");
 });
 
 
@@ -130,15 +131,15 @@ app.get('/api/product', async (req, res) => {
 //find one and update
 app.put('/api/product', async (req, res) => {
     try {
-        const product = await Product.findOneAndUpdate({name:req.query.name}, req.body);
+        const product = await Product.findOneAndUpdate({name:req.query.name}, req.body,{new:true, lean:true});
 
         if (!product) {
             res.status(404).json({message:"Product not found"});
         }
 
-        const updatedProduct = await Product.findOne({name:req.query.name});
+        // const updatedProduct = await Product.findOne({name:req.query.name}); by pass this with new:true and lean :true
 
-        res.status(200).json(updatedProduct);
+        res.status(200).json(product);
         
     } catch (error) {
         res.status(500).json({message:error.message});
@@ -148,6 +149,17 @@ app.put('/api/product', async (req, res) => {
 
 
 
+mongoose.connect(mongoUrl).then(() => {
+    console.log("Database Connected!");
+    app.listen(3000, () => {
+        console.log("App is running on server - http://localhost:3000");
+
+    });
+
+}).catch((err) => {
+    console.error("Database not connected, Error - ", err);
+
+});
 
 
 
