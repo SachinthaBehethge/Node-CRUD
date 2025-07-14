@@ -1,20 +1,19 @@
 const express = require('express');
-const Product = require('../models/product_model');
-
-const { getProducts, createProduct, getProduct, updateProduct, deleteProduct, findProduct, findAndUpdateProduct } = require('../controllers/product.controller');
-
+const { getProducts, createProduct, getProduct, updateProduct, deleteProduct, findProduct, findAndUpdateProduct } = require('../controller/product.controller');
 const router = express.Router();
 
-//get Products
+
+//READ
 router.get('/', getProducts);
 
-//create product
-router.post('/', createProduct);
+
+//CREATE
+router.post('/',createProduct);
 
 
 //GETONE
 
-router.get('/:id', getProduct);
+router.get('/:id',getProduct );
 
 
 
@@ -37,5 +36,3 @@ router.put('/', findAndUpdateProduct);
 
 
 module.exports = router;
-
-

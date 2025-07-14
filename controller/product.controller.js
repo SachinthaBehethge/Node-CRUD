@@ -1,40 +1,23 @@
-// console.log("hello");
+const Product = require('../models/product_model');
 
-// import express from 'express'?
-
-//pw - RVhkC9EcaV5mo6Qe
-// const express = require('express');
-
-
-const express = require('express');
-const mongoose = require('mongoose');
-const Product = require('./models/product_model');
-require('dotenv').config();
-const app = express();
-//middlewear
-app.use(express.json());
-
-
-//env
-const mongoUrl = process.env.MONGO_DB_URL; 
+ 
+ 
+ 
+ 
+ 
+ const getProducts = async (req, res)=>{
+    try {
+        const products = await Product.find();
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({message:error.message});
+    }
+}
 
 
-//routs
-app.use("/api/products", productRoute);
+const createProduct =   async (req, res) => {
 
-
-
-
-app.get('/', (req, res) => {
-    res.send("product-app");
-});
-
-
-//CREATE
-app.post('/api/products', async (req, res) => {
-
-    // console.log(req.body.name);
-    // res.send(req.body.name);
+    
 
     try {
        const products = await Product.create(req.body);
@@ -43,24 +26,10 @@ app.post('/api/products', async (req, res) => {
         res.status(500).json({message: error.message});
     }
     
-});
-
-//READ
-app.get('/api/products', async (req, res)=>{
-    try {
-        const products = await Product.find();
-        res.status(200).json(products);
-    } catch (error) {
-        res.status(500).json({message:error.message});
-    }
-});
+}
 
 
-
-
-//GETONE
-
-app.get('/api/products/:id', async (req,res)=>{
+const getProduct = async (req,res)=>{
     try {
         const {id} = req.params;
 
@@ -73,14 +42,10 @@ app.get('/api/products/:id', async (req,res)=>{
     } catch (error) {
         res.status(500).json({message:error.message});
     }
-});
+}
 
 
-
-// update a product
-
-
-app.put('/api/products/:id', async (req, res)=>{
+const updateProduct = async (req, res)=>{
     try {
         const {id} = req.params;
 
@@ -98,11 +63,12 @@ app.put('/api/products/:id', async (req, res)=>{
     } catch (error) {
         res.status(500).json({message:error.message});
     }
-});
+}
 
-//delete a product
 
-app.delete('/api/products/:id', async (req,res) =>{
+
+const deleteProduct = async (req,res) =>{
+
     try {
         const {id} = req.params;
         const prodcut = await Product.findByIdAndDelete(id);
@@ -118,11 +84,10 @@ app.delete('/api/products/:id', async (req,res) =>{
     } catch (error) {
         res.status(500).json({message:error.message});
     }
-});
+}
 
-//findone
 
-app.get('/api/product', async (req, res) => {
+const findProduct = async (req, res) => {
     try {
         const product = await Product.findOne({name:req.query.name});
 
@@ -135,10 +100,10 @@ app.get('/api/product', async (req, res) => {
     } catch (error) {
         res.status(500).json({message:error.message});
     }
-});
+}
 
-//find one and update
-app.put('/api/product', async (req, res) => {
+
+const findAndUpdateProduct = async (req, res) => {
     try {
         const product = await Product.findOneAndUpdate({name:req.query.name}, req.body,{new:true, lean:true});
 
@@ -153,22 +118,15 @@ app.put('/api/product', async (req, res) => {
     } catch (error) {
         res.status(500).json({message:error.message});
     }
-});
+}
 
 
-
-
-mongoose.connect(mongoUrl).then(() => {
-    console.log("Database Connected!");
-    app.listen(3000, () => {
-        console.log("App is running on server - http://localhost:3000");
-
-    });
-
-}).catch((err) => {
-    console.error("Database not connected, Error - ", err);
-
-});
-
-
-
+module.exports = {
+    getProducts,
+    createProduct,
+    getProduct,
+    updateProduct,
+    deleteProduct,
+    findProduct,
+    findAndUpdateProduct
+}
